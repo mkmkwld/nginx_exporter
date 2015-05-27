@@ -1,14 +1,12 @@
-FROM       ubuntu
-MAINTAINER Johannes 'fish' Ziemke <github@freigeist.org> @discordianfish
+FROM       ubuntu:14.04
+MAINTAINER  mlw99@outlook.com
 
-RUN        apt-get update && apt-get install -yq curl git mercurial gcc
-RUN        curl -s https://go.googlecode.com/files/go1.2.linux-amd64.tar.gz | tar -C /usr/local -xzf -
-ENV        PATH    /usr/local/go/bin:$PATH
-ENV        GOPATH  /go
+EXPOSE     9090
 
-ADD        . /usr/src/nginx_exporter
-RUN        cd /usr/src/nginx_exporter && \
-           go get -d && go build && cp nginx_exporter /
+CMD mdkir -p /apps/nginx_exporter/bin
 
-ENTRYPOINT [ "/nginx_exporter" ]
-EXPOSE     8080
+WORKDIR /apps/nginx_exporter
+ADD nginx_exporter bin/
+
+CMD [ "bin/nginx_exporter", "-telemetry.address=:9090", \
+  "-nginx.scrape_uri=http://nginx/nginx_status" ]
